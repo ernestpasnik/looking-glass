@@ -1,7 +1,7 @@
 ## Introduction
-A lightweight Looking Glass built with [Node.js](https://nodejs.org/) and [Bootstrap 5.3](https://getbootstrap.com/docs/5.3/getting-started/introduction/), this project draws heavy inspiration from [Hybula Looking Glass](https://github.com/hybula/lookingglass), but has been reimagined and completely rewritten in Node.js. It utilizes WebSockets for real-time communication. Check out the [live demo](https://lg-de-fra.erpa.cc/), which features the Cosmo theme from Bootswatch.
+A lightweight Looking Glass built with **Node.js** and **Bootstrap 5.3**, this project draws heavy inspiration from [Hybula Looking Glass](https://github.com/hybula/lookingglass). Check out the [live demo](https://lg-de-fra.erpa.cc/), which features the Cosmo theme from Bootswatch.
 
-![screenshot](https://i.imgur.com/MvDmyZt.png)
+![Screenshot](https://imgur.com/B232FwT.jpeg)
 
 ## Requirements
 - Linux
