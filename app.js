@@ -53,20 +53,22 @@ const isValidTarget = (target) => {
   return hostnameRegex.test(target)
 }
 
-wss.on('connection', (ws) => {
-  console.log('WebSocket connection established')
+wss.on('connection', (ws, req) => {
+  const forwarded = req.headers['x-forwarded-for']
+  const ip = forwarded ? forwarded.split(',')[0] : req.socket.remoteAddress
+  console.log(`[${ip}] WebSocket connection established`)
 
   ws.on('message', (message) => {
     const command = message.toString().trim()
 
     if (clientCommands.has(ws)) {
-      console.log('A command is already running for this client')
+      console.log(`[${ip}] Command already running`)
       return
     }
 
     const commandMatch = commandRegex.exec(command)
     if (!commandMatch) {
-      console.log('Invalid command format')
+      console.log(`[${ip}] Invalid command ${command}`)
       ws.send('Invalid command format')
       ws.send('close')
       return
@@ -74,7 +76,7 @@ wss.on('connection', (ws) => {
 
     const target = commandMatch[2]
     if (!isValidTarget(target)) {
-      console.log('Target must be a valid IP address or hostname')
+      console.log(`[${ip}] Invalid target ${target}`)
       ws.send('Target must be a valid IP address or hostname')
       ws.send('close')
       return
@@ -95,7 +97,7 @@ wss.on('connection', (ws) => {
         break
     }
 
-    console.log(`Executing: ${cmd} ${target}`)
+    console.log(`[${ip}] Executing ${cmd} ${target}`)
     const commandProcess = spawn(`${cmd} ${target}`, { shell: true })
     clientCommands.set(ws, commandProcess)
 
@@ -114,7 +116,7 @@ wss.on('connection', (ws) => {
   })
 
   ws.on('close', () => {
-    console.log('WebSocket connection closed')
+    console.log(`[${ip}] WebSocket connection closed`)
     const commandProcess = clientCommands.get(ws)
     if (commandProcess) {
       commandProcess.kill()
