@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en" data-bs-theme="{{themeMode}}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Looking Glass — {{company}}</title>
+  <link href="{{stylesheet}}" rel="stylesheet">
+</head>
+<body class="bg-body-tertiary">
+  <div class="col-lg-8 mx-auto p-3 py-md-5">
+    <header class="d-flex align-items-center justify-content-between mb-5">
+      <div class="col-4">
+        <a class="navbar-brand" href="{{companyUrl}}"><h1 class="h3">{{company}}</h1></a>
+      </div>
+      <div class="col-4 float-end">
+        <select id="locations" class="form-select" onchange="window.location = this.options[this.selectedIndex].value">
+          {{#each locations}}
+            <option value="{{this}}" {{#if (eq @key ../location)}}selected{{/if}}>{{@key}}</option>
+          {{/each}}
+        </select>
+      </div>
+    </header>
+    <main>
+      <div class="row mb-5">
+        <div class="card shadow-lg">
+          <div class="card-body p-3">
+            <h2 class="fs-4 card-title mt-1 mb-3">Looking Glass</h2>
+            <div class="row mb-3">
+              <div class="col-md-6 mb-3">
+                <label for="location" class="mb-2 text-muted">Location</label>
+                <div class="input-group">
+                  <input id="location" type="text" class="form-control" value="{{location}}" onfocus="this.select()" readonly="">
+                  <a class="btn btn-outline-primary" href="{{locationUrl}}" target="_blank">Map</a>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label for="facility" class="mb-2 text-muted">Facility</label>
+                <div class="input-group">
+                  <input id="facility" type="text" class="form-control" value="{{facility}}" onfocus="this.select()" readonly="">
+                  <a href="{{facilityUrl}}" class="btn btn-outline-primary" target="_blank">PeeringDB</a>
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="ipv4" class="mb-2 text-muted">IPv4 address</label>
+                <div class="input-group mb-3">
+                  <input id="ipv4" type="text" class="form-control" value="{{ipv4}}" onfocus="this.select()" readonly="">
+                  <button class="btn btn-outline-primary" onclick="copyToClipboard('{{ipv4}}', this)">Copy</button>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label for="ipv6" class="mb-2 text-muted">IPv6 address</label>
+                <div class="input-group">
+                  <input id="ipv6" type="text" class="form-control" value="{{ipv6}}" onfocus="this.select()" readonly="">
+                  <button class="btn btn-outline-primary" onclick="copyToClipboard('{{ipv6}}', this)">Copy</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row pb-5">
+        <div class="card shadow-lg">
+          <div class="card-body p-3">
+            <h2 class="fs-4 card-title mt-1 mb-3">Command Query</h2>
+            <div class="row">
+              <div class="col-md-6">
+                <label for="target" class="mb-2 text-muted">Target</label>
+                <div class="input-group mb-3">
+                  <input id="target" type="text" class="form-control" placeholder="IP address or hostname">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-2 text-muted">Execute</div>
+                <div class="btn-group input-group mb-3">
+                  <button id="ping" class="btn btn-outline-primary" onclick="sendCommand('ping')">ping</button>
+                  <button id="mtr" class="btn btn-outline-primary" onclick="sendCommand('mtr')">mtr</button>
+                  <button id="traceroute" class="btn btn-outline-primary" onclick="sendCommand('traceroute')">traceroute</button>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <pre id="output" class="p-3 bg-dark text-light rounded d-none"></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row pb-5">
+        <div class="card shadow-lg">
+          <div class="card-body p-3">
+            <h2 class="fs-4 card-title mt-1 mb-3">Speed Test</h2>
+            <div class="row mb-3">
+              <div class="col-md-6 mb-3">
+                <label for="iperf3incoming" class="mb-2 text-muted">iPerf3 Incoming</label>
+                <div class="input-group">
+                  <input id="iperf3incoming" type="text" class="form-control" value="{{iPerf3incoming}}" onfocus="this.select()" readonly="">
+                  <button class="btn btn-outline-primary" onclick="copyToClipboard('{{iPerf3incoming}}', this)">Copy</button>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label for="iperf3outgoing" class="mb-2 text-muted">iPerf3 Outgoing</label>
+                <div class="input-group">
+                  <input id="iperf3outgoing" type="text" class="form-control" value="{{iPerf3outgoing}}" onfocus="this.select()" readonly="">
+                  <button class="btn btn-outline-primary" onclick="copyToClipboard('{{iPerf3outgoing}}', this)">Copy</button>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="mb-2 text-muted">Test Files</div>
+              <div class="btn-group input-group mb-3">
+                {{#each speedtestFiles}}
+                  <a href="{{this}}" class="btn btn-outline-primary">{{@key}}</a>
+                {{/each}}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <footer>
+      <small class="text-muted">Looking Glass licensed <a href="https://github.com/ernestpasnik/looking-glass/blob/main/LICENSE" target="_blank">MIT</a>.</small>
+      <a href="https://github.com/ernestpasnik/looking-glass" target="_blank" class="float-end">
+        <img src="https://img.shields.io/github/stars/ernestpasnik/looking-glass?style=social" alt="GitHub">
+      </a>
+    </footer>
+  </div>
+
+<script>
+let ws
+let commandRunning = false
+const output = document.getElementById('output')
+const target = document.getElementById('target')
+const ping = document.getElementById('ping')
+const mtr = document.getElementById('mtr')
+const traceroute = document.getElementById('traceroute')
+
+function toggleButtons(disabled) {
+  ping.disabled = disabled
+  mtr.disabled = disabled
+  traceroute.disabled = disabled
+}
+
+function connectWebSocket() {
+  const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws'
+  const hostname = window.location.hostname
+  ws = new WebSocket(`${protocol}://${hostname}`)
+
+  ws.onopen = () => {
+    console.log('WebSocket connection opened')
+  }
+
+  ws.onmessage = (event) => {
+    if (event.data == 'close') {
+      commandRunning = false
+      toggleButtons(false)
+      return
+    }
+    output.classList.remove('d-none')
+    output.textContent += event.data
+  }
+
+  ws.onclose = () => {
+    console.log('WebSocket connection closed')
+    commandRunning = false
+  }
+
+  ws.onerror = (error) => {
+    console.error('WebSocket error:', error)
+    commandRunning = false
+  }
+}
+
+function sendCommand(commandType) {
+  if (commandRunning) {
+    return
+  }
+
+  if (!target.value) {
+    target.focus()
+    return
+  }
+
+  toggleButtons(true)
+  commandRunning = true
+  output.textContent = ''
+
+  if (ws && ws.readyState === WebSocket.OPEN) {
+    ws.send(`${commandType} ${target.value}`)
+  } else {
+    output.textContent = 'WebSocket connection is not open'
+  }
+}
+
+window.onload = connectWebSocket
+
+async function copyToClipboard(text, button) {
+  if (!navigator || !navigator.clipboard || !navigator.clipboard.writeText) {
+    return Promise.reject('The Clipboard API is not available.')
+  }
+  button.innerHTML = 'Copied'
+  await navigator.clipboard.writeText(text)
+  await new Promise(r => setTimeout(r, 2000))
+  button.innerHTML = 'Copy'
+}
+</script>
+
+</body>
+</html>

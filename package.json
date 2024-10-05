@@ -1,0 +1,20 @@
+{
+  "name": "looking-glass",
+  "version": "1.0.0",
+  "description": "Lightweight and simple Looking Glass powered by Node.js and Bootstrap 5.3",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ernestpasnik/looking-glass.git"
+  },
+  "license": "Apache-2.0",
+  "author": "Ernest Paśnik",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "handlebars": "*",
+    "html-minifier": "*",
+    "ws": "*"
+  }
+}
