@@ -88,7 +88,7 @@ wss.on('connection', (ws, req) => {
         cmd = 'ping -c 4 -w15'
         break
       case 'mtr':
-        cmd = 'mtr --raw -n -c 10'
+        cmd = 'mtr -n -c 10'
         break
       case 'traceroute':
         cmd = 'traceroute -w2'

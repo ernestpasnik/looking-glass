@@ -20,99 +20,89 @@
         </select>
       </div>
     </header>
-    <main>
-      <div class="row mb-5">
-        <div class="card shadow-lg">
-          <div class="card-body p-3">
-            <h2 class="fs-4 card-title mt-1 mb-3">Looking Glass</h2>
-            <div class="row mb-3">
-              <div class="col-md-6 mb-3">
-                <label for="location" class="mb-2 text-muted">Location</label>
-                <div class="input-group">
-                  <input id="location" type="text" class="form-control" value="{{location}}" onfocus="this.select()" readonly="">
-                  <a class="btn btn-outline-primary" href="{{locationUrl}}" target="_blank">Map</a>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <label for="facility" class="mb-2 text-muted">Facility</label>
-                <div class="input-group">
-                  <input id="facility" type="text" class="form-control" value="{{facility}}" onfocus="this.select()" readonly="">
-                  <a href="{{facilityUrl}}" class="btn btn-outline-primary" target="_blank">PeeringDB</a>
-                </div>
+    <main class="row mb-5">
+      <div class="card shadow-lg">
+        <div class="card-body border-bottom">
+          <h2 class="fs-5 card-title mt-1 mb-3">Looking Glass</h2>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="location" class="mb-2 text-muted">Location</label>
+              <div class="input-group">
+                <input id="location" type="text" class="form-control" value="{{location}}" onfocus="this.select()" readonly="">
+                <a class="btn btn-outline-primary" href="{{locationUrl}}" target="_blank">Map</a>
               </div>
             </div>
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <label for="ipv4" class="mb-2 text-muted">IPv4 address</label>
-                <div class="input-group mb-3">
-                  <input id="ipv4" type="text" class="form-control" value="{{ipv4}}" onfocus="this.select()" readonly="">
-                  <button class="btn btn-outline-primary" onclick="copyToClipboard('{{ipv4}}', this)">Copy</button>
-                </div>
+            <div class="col-md-6 mb-3">
+              <label for="facility" class="mb-2 text-muted">Facility</label>
+              <div class="input-group">
+                <input id="facility" type="text" class="form-control" value="{{facility}}" onfocus="this.select()" readonly="">
+                <a href="{{facilityUrl}}" class="btn btn-outline-primary" target="_blank">PeeringDB</a>
               </div>
-              <div class="col-md-6">
-                <label for="ipv6" class="mb-2 text-muted">IPv6 address</label>
-                <div class="input-group">
-                  <input id="ipv6" type="text" class="form-control" value="{{ipv6}}" onfocus="this.select()" readonly="">
-                  <button class="btn btn-outline-primary" onclick="copyToClipboard('{{ipv6}}', this)">Copy</button>
-                </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="ipv4" class="mb-2 text-muted">IPv4 address</label>
+              <div class="input-group">
+                <input id="ipv4" type="text" class="form-control" value="{{ipv4}}" onfocus="this.select()" readonly="">
+                <button class="btn btn-outline-primary" onclick="copyToClipboard('{{ipv4}}', this)">Copy</button>
+              </div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="ipv6" class="mb-2 text-muted">IPv6 address</label>
+              <div class="input-group">
+                <input id="ipv6" type="text" class="form-control" value="{{ipv6}}" onfocus="this.select()" readonly="">
+                <button class="btn btn-outline-primary" onclick="copyToClipboard('{{ipv6}}', this)">Copy</button>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="row pb-5">
-        <div class="card shadow-lg">
-          <div class="card-body p-3">
-            <h2 class="fs-4 card-title mt-1 mb-3">Command Query</h2>
-            <div class="row">
-              <div class="col-md-6">
-                <label for="target" class="mb-2 text-muted">Target</label>
-                <div class="input-group mb-3">
-                  <input id="target" type="text" class="form-control" placeholder="IP address or hostname">
-                </div>
+        <div class="card-body border-bottom">
+          <h2 class="fs-5 card-title mt-1 mb-3">Command Query</h2>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="target" class="mb-2 text-muted">Target</label>
+              <div class="input-group">
+                <input id="target" type="text" class="form-control" placeholder="IP address or hostname">
               </div>
-              <div class="col-md-6">
-                <div class="mb-2 text-muted">Execute</div>
-                <div class="btn-group input-group mb-3">
-                  <button id="ping" class="btn btn-outline-primary" onclick="sendCommand('ping')">ping</button>
-                  <button id="mtr" class="btn btn-outline-primary" onclick="sendCommand('mtr')">mtr</button>
-                  <button id="traceroute" class="btn btn-outline-primary" onclick="sendCommand('traceroute')">traceroute</button>
-                </div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <div class="mb-2 text-muted">Execute</div>
+              <div class="btn-group input-group">
+                <button id="ping" class="btn btn-outline-primary" onclick="send('ping')">ping</button>
+                <button id="mtr" class="btn btn-outline-primary" onclick="send('mtr')">mtr</button>
+                <button id="traceroute" class="btn btn-outline-primary" onclick="send('traceroute')">traceroute</button>
               </div>
-              <div class="col-md-12">
-                <pre id="output" class="p-3 bg-dark text-light rounded d-none"></pre>
-              </div>
+            </div>
+            <div class="col-md-12">
+              <pre id="output" class="p-3 bg-dark text-light rounded d-none"></pre>
             </div>
           </div>
         </div>
-      </div>
-      <div class="row pb-5">
-        <div class="card shadow-lg">
-          <div class="card-body p-3">
-            <h2 class="fs-4 card-title mt-1 mb-3">Speed Test</h2>
-            <div class="row mb-3">
-              <div class="col-md-6 mb-3">
-                <label for="iperf3incoming" class="mb-2 text-muted">iPerf3 Incoming</label>
-                <div class="input-group">
-                  <input id="iperf3incoming" type="text" class="form-control" value="{{iPerf3incoming}}" onfocus="this.select()" readonly="">
-                  <button class="btn btn-outline-primary" onclick="copyToClipboard('{{iPerf3incoming}}', this)">Copy</button>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <label for="iperf3outgoing" class="mb-2 text-muted">iPerf3 Outgoing</label>
-                <div class="input-group">
-                  <input id="iperf3outgoing" type="text" class="form-control" value="{{iPerf3outgoing}}" onfocus="this.select()" readonly="">
-                  <button class="btn btn-outline-primary" onclick="copyToClipboard('{{iPerf3outgoing}}', this)">Copy</button>
-                </div>
+        <div class="card-body">
+          <h2 class="fs-5 card-title mt-1 mb-3">Speed Test</h2>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="iperf3incoming" class="mb-2 text-muted">iPerf3 Incoming</label>
+              <div class="input-group">
+                <input id="iperf3incoming" type="text" class="form-control" value="{{iPerf3incoming}}" onfocus="this.select()" readonly="">
+                <button class="btn btn-outline-primary" onclick="copyToClipboard('{{iPerf3incoming}}', this)">Copy</button>
               </div>
             </div>
-            <div class="row">
-              <div class="mb-2 text-muted">Test Files</div>
-              <div class="btn-group input-group mb-3">
-                {{#each speedtestFiles}}
-                  <a href="{{this}}" class="btn btn-outline-primary">{{@key}}</a>
-                {{/each}}
+            <div class="col-md-6 mb-3">
+              <label for="iperf3outgoing" class="mb-2 text-muted">iPerf3 Outgoing</label>
+              <div class="input-group">
+                <input id="iperf3outgoing" type="text" class="form-control" value="{{iPerf3outgoing}}" onfocus="this.select()" readonly="">
+                <button class="btn btn-outline-primary" onclick="copyToClipboard('{{iPerf3outgoing}}', this)">Copy</button>
               </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="mb-2 text-muted">Test Files</div>
+            <div class="btn-group input-group mb-3">
+              {{#each speedtestFiles}}
+                <a href="{{this}}" class="btn btn-outline-primary">{{@key}}</a>
+              {{/each}}
             </div>
           </div>
         </div>
@@ -125,7 +115,6 @@
       </a>
     </footer>
   </div>
-
 <script>
 let ws
 let commandRunning = false
@@ -171,7 +160,7 @@ function connectWebSocket() {
   }
 }
 
-function sendCommand(commandType) {
+function send(commandType) {
   if (commandRunning) {
     return
   }
@@ -200,10 +189,9 @@ async function copyToClipboard(text, button) {
   }
   button.innerHTML = 'Copied'
   await navigator.clipboard.writeText(text)
-  await new Promise(r => setTimeout(r, 2000))
+  await new Promise(r => setTimeout(r, 1000))
   button.innerHTML = 'Copy'
 }
 </script>
-
 </body>
 </html>
