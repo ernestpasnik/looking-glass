@@ -11,25 +11,27 @@ if (!fs.existsSync('config.json')) {
   process.exit(1)
 }
 
-Handlebars.registerHelper('eq', function(a, b) {
-  return a === b
-})
-
-const source = fs.readFileSync('index.hbs', 'utf8')
-const template = Handlebars.compile(source)
-const htmlContent = template(require('./config.json'))
-const minifiedHtml = minify(htmlContent, {
+const options = {
   collapseWhitespace: true,
   removeComments: true,
   removeEmptyAttributes: true,
-  minifyCSS: true,
   minifyJS: true
-})
+}
+const json = require('./config.json')
+const hbs = fs.readFileSync('index.hbs', 'utf8')
+const js = fs.readFileSync('client.js', 'utf8')
+Handlebars.registerHelper('eq', function(a, b) { return a === b })
+const template = Handlebars.compile(hbs)
+const minifiedHtml = minify(template(json), options)
+const minifedJs = minify(js, options)
 
 const server = http.createServer((req, res) => {
   if (req.url === '/') {
     res.writeHead(200, { 'Content-Type': 'text/html' })
     res.end(minifiedHtml)
+  } else if (req.url === '/client.js') {
+    res.writeHead(200, { 'Content-Type': 'text/javascript' })
+    res.end(minifedJs)
   } else {
     res.writeHead(404, { 'Content-Type': 'text/plain' })
     res.end('404 Not Found')

@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Looking Glass — {{company}}</title>
   <link href="{{stylesheet}}" rel="stylesheet">
+  <script defer src="client.js?06102024"></script>
 </head>
 <body class="bg-body-tertiary">
   <div class="col-lg-8 mx-auto p-3 py-md-5">
@@ -45,14 +46,14 @@
               <label for="ipv4" class="mb-2 text-muted">IPv4 address</label>
               <div class="input-group">
                 <input id="ipv4" type="text" class="form-control" value="{{ipv4}}" onfocus="this.select()" readonly="">
-                <button class="btn btn-outline-primary" onclick="copyToClipboard('{{ipv4}}', this)">Copy</button>
+                <button class="btn btn-outline-primary" onclick="copy('{{ipv4}}', this)">Copy</button>
               </div>
             </div>
             <div class="col-md-6 mb-3">
               <label for="ipv6" class="mb-2 text-muted">IPv6 address</label>
               <div class="input-group">
                 <input id="ipv6" type="text" class="form-control" value="{{ipv6}}" onfocus="this.select()" readonly="">
-                <button class="btn btn-outline-primary" onclick="copyToClipboard('{{ipv6}}', this)">Copy</button>
+                <button class="btn btn-outline-primary" onclick="copy('{{ipv6}}', this)">Copy</button>
               </div>
             </div>
           </div>
@@ -86,14 +87,14 @@
               <label for="iperf3incoming" class="mb-2 text-muted">iPerf3 Incoming</label>
               <div class="input-group">
                 <input id="iperf3incoming" type="text" class="form-control" value="{{iPerf3incoming}}" onfocus="this.select()" readonly="">
-                <button class="btn btn-outline-primary" onclick="copyToClipboard('{{iPerf3incoming}}', this)">Copy</button>
+                <button class="btn btn-outline-primary" onclick="copy('{{iPerf3incoming}}', this)">Copy</button>
               </div>
             </div>
             <div class="col-md-6 mb-3">
               <label for="iperf3outgoing" class="mb-2 text-muted">iPerf3 Outgoing</label>
               <div class="input-group">
                 <input id="iperf3outgoing" type="text" class="form-control" value="{{iPerf3outgoing}}" onfocus="this.select()" readonly="">
-                <button class="btn btn-outline-primary" onclick="copyToClipboard('{{iPerf3outgoing}}', this)">Copy</button>
+                <button class="btn btn-outline-primary" onclick="copy('{{iPerf3outgoing}}', this)">Copy</button>
               </div>
             </div>
           </div>
@@ -115,83 +116,5 @@
       </a>
     </footer>
   </div>
-<script>
-let ws
-let commandRunning = false
-const output = document.getElementById('output')
-const target = document.getElementById('target')
-const ping = document.getElementById('ping')
-const mtr = document.getElementById('mtr')
-const traceroute = document.getElementById('traceroute')
-
-function toggleButtons(disabled) {
-  ping.disabled = disabled
-  mtr.disabled = disabled
-  traceroute.disabled = disabled
-}
-
-function connectWebSocket() {
-  const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws'
-  const hostname = window.location.hostname
-  ws = new WebSocket(`${protocol}://${hostname}`)
-
-  ws.onopen = () => {
-    console.log('WebSocket connection opened')
-  }
-
-  ws.onmessage = (event) => {
-    if (event.data == 'close') {
-      commandRunning = false
-      toggleButtons(false)
-      return
-    }
-    output.classList.remove('d-none')
-    output.textContent += event.data
-  }
-
-  ws.onclose = () => {
-    console.log('WebSocket connection closed')
-    commandRunning = false
-  }
-
-  ws.onerror = (error) => {
-    console.error('WebSocket error:', error)
-    commandRunning = false
-  }
-}
-
-function send(commandType) {
-  if (commandRunning) {
-    return
-  }
-
-  if (!target.value) {
-    target.focus()
-    return
-  }
-
-  toggleButtons(true)
-  commandRunning = true
-  output.textContent = ''
-
-  if (ws && ws.readyState === WebSocket.OPEN) {
-    ws.send(`${commandType} ${target.value}`)
-  } else {
-    output.textContent = 'WebSocket connection is not open'
-  }
-}
-
-window.onload = connectWebSocket
-
-async function copyToClipboard(text, button) {
-  if (!navigator || !navigator.clipboard || !navigator.clipboard.writeText) {
-    return Promise.reject('The Clipboard API is not available.')
-  }
-  button.innerHTML = 'Copied'
-  await navigator.clipboard.writeText(text)
-  await new Promise(r => setTimeout(r, 1000))
-  button.innerHTML = 'Copy'
-}
-</script>
 </body>
 </html>

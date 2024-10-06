@@ -1,7 +1,7 @@
 {
   "company": "Example",
   "companyUrl": "https://example.com/",
-  "stylesheet": "https://bootswatch.com/5/cosmo/bootstrap.min.css",
+  "stylesheet": "https://bootswatch.com/5/cerulean/bootstrap.min.css",
   "themeMode": "dark",
   "location": "Amsterdam, Netherlands",
   "locationUrl": "https://maps.google.com/?q=52.356394,4.950837",
