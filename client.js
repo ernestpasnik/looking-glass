@@ -89,14 +89,3 @@ function send(commandType) {
 }
 
 window.onload = connectWebSocket;
-
-// https://github.com/hybula/lookingglass/blob/main/index.php#L384
-async function copy(txt, btn) {
-  if (!navigator || !navigator.clipboard || !navigator.clipboard.writeText) {
-    return Promise.reject('The Clipboard API is not available');
-  }
-  btn.innerHTML = 'Copied';
-  await navigator.clipboard.writeText(txt);
-  await new Promise(r => setTimeout(r, 1000));
-  btn.innerHTML = 'Copy';
-}

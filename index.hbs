@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Looking Glass — {{company}}</title>
   <link href="{{stylesheet}}" rel="stylesheet">
-  <script defer src="client.js?06102024"></script>
 </head>
 <body class="bg-body-tertiary">
   <div class="col-lg-8 mx-auto p-3 py-md-5">
@@ -116,5 +115,14 @@
       </a>
     </footer>
   </div>
+  <script src="client.js"></script>
+  <script>
+  async function copy(txt, btn) {
+    if (!navigator.clipboard?.writeText) return Promise.reject('Copy n/a');
+    btn.innerHTML = 'Copied';
+    await navigator.clipboard.writeText(txt);
+    setTimeout(() => btn.innerHTML = 'Copy', 1000);
+  }
+  </script>
 </body>
 </html>
