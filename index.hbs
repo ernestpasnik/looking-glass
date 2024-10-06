@@ -27,32 +27,32 @@
           <h2 class="fs-5 card-title mt-1 mb-3">Looking Glass</h2>
           <div class="row">
             <div class="col-md-6 mb-3">
-              <label for="location" class="mb-2 text-muted">Location</label>
+              <label for="loc" class="mb-2 text-muted">Location</label>
               <div class="input-group">
-                <input id="location" type="text" class="form-control" value="{{location}}" onfocus="this.select()" readonly="">
+                <input id="loc" type="text" class="form-control" value="{{location}}" onfocus="this.select()" readonly="">
                 <a class="btn btn-outline-primary" href="{{locationUrl}}" target="_blank">Map</a>
               </div>
             </div>
             <div class="col-md-6 mb-3">
-              <label for="facility" class="mb-2 text-muted">Facility</label>
+              <label for="fac" class="mb-2 text-muted">Facility</label>
               <div class="input-group">
-                <input id="facility" type="text" class="form-control" value="{{facility}}" onfocus="this.select()" readonly="">
+                <input id="fac" type="text" class="form-control" value="{{facility}}" onfocus="this.select()" readonly="">
                 <a href="{{facilityUrl}}" class="btn btn-outline-primary" target="_blank">PeeringDB</a>
               </div>
             </div>
           </div>
           <div class="row">
             <div class="col-md-6 mb-3">
-              <label for="ipv4" class="mb-2 text-muted">IPv4 address</label>
+              <label for="v4" class="mb-2 text-muted">IPv4 address</label>
               <div class="input-group">
-                <input id="ipv4" type="text" class="form-control" value="{{ipv4}}" onfocus="this.select()" readonly="">
+                <input id="v4" type="text" class="form-control" value="{{ipv4}}" onfocus="this.select()" readonly="">
                 <button class="btn btn-outline-primary" onclick="copy('{{ipv4}}', this)">Copy</button>
               </div>
             </div>
             <div class="col-md-6 mb-3">
-              <label for="ipv6" class="mb-2 text-muted">IPv6 address</label>
+              <label for="v6" class="mb-2 text-muted">IPv6 address</label>
               <div class="input-group">
-                <input id="ipv6" type="text" class="form-control" value="{{ipv6}}" onfocus="this.select()" readonly="">
+                <input id="v6" type="text" class="form-control" value="{{ipv6}}" onfocus="this.select()" readonly="">
                 <button class="btn btn-outline-primary" onclick="copy('{{ipv6}}', this)">Copy</button>
               </div>
             </div>
@@ -84,16 +84,16 @@
           <h2 class="fs-5 card-title mt-1 mb-3">Speed Test</h2>
           <div class="row">
             <div class="col-md-6 mb-3">
-              <label for="iperf3incoming" class="mb-2 text-muted">iPerf3 Incoming</label>
+              <label for="inc" class="mb-2 text-muted">iPerf3 Incoming</label>
               <div class="input-group">
-                <input id="iperf3incoming" type="text" class="form-control" value="{{iPerf3incoming}}" onfocus="this.select()" readonly="">
+                <input id="inc" type="text" class="form-control" value="{{iPerf3incoming}}" onfocus="this.select()" readonly="">
                 <button class="btn btn-outline-primary" onclick="copy('{{iPerf3incoming}}', this)">Copy</button>
               </div>
             </div>
             <div class="col-md-6 mb-3">
-              <label for="iperf3outgoing" class="mb-2 text-muted">iPerf3 Outgoing</label>
+              <label for="out" class="mb-2 text-muted">iPerf3 Outgoing</label>
               <div class="input-group">
-                <input id="iperf3outgoing" type="text" class="form-control" value="{{iPerf3outgoing}}" onfocus="this.select()" readonly="">
+                <input id="out" type="text" class="form-control" value="{{iPerf3outgoing}}" onfocus="this.select()" readonly="">
                 <button class="btn btn-outline-primary" onclick="copy('{{iPerf3outgoing}}', this)">Copy</button>
               </div>
             </div>
@@ -112,7 +112,7 @@
     <footer>
       <small class="text-muted">Looking Glass licensed <a href="https://github.com/ernestpasnik/looking-glass/blob/main/LICENSE" target="_blank">Apache-2.0</a>.</small>
       <a href="https://github.com/ernestpasnik/looking-glass" target="_blank" class="float-end">
-        <img src="https://img.shields.io/github/stars/ernestpasnik/looking-glass?style=social" alt="GitHub">
+        <img src="https://img.shields.io/github/stars/ernestpasnik/looking-glass" alt="GitHub">
       </a>
     </footer>
   </div>

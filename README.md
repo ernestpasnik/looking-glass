@@ -1,9 +1,7 @@
 ## Introduction
 Lightweight and simple looking glass powered by Node.js and Bootstrap 5.3, inspiration from [hybula/lookingglass](https://github.com/hybula/lookingglass).
 
-[Live Demo](https://lg-de-fra.erpa.cc/)
-
-![Screenshot](https://i.imgur.com/2PzRoDI.jpeg)
+![Screenshot](https://i.imgur.com/LjldNXf.png)
 
 ## Requirements
 - Linux
