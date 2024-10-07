@@ -12,7 +12,6 @@
   - Listens for incoming data from the server, displays it in real-time, and
     handles connection closure.
   - Handles errors and WebSocket reconnections.
-  - Includes a utility to copy text (e.g., IP addresses) to the clipboard.
 
   Functions:
   - toggleButtons: Enables/disables command buttons based on whether a 
@@ -21,7 +20,6 @@
     handlers for open, message, close, and error events.
   - send: Sends the selected command (ping, mtr, or traceroute) to the server 
     and updates the UI accordingly.
-  - copy: Copies text to the clipboard with user feedback on the button.
 */
 
 let ws;

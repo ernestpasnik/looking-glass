@@ -1,24 +1,22 @@
 {
   "company": "Example",
-  "companyUrl": "https://example.com/",
-  "stylesheet": "https://bootswatch.com/5/cerulean/bootstrap.min.css",
+  "companyUrl": "https://looking-glass.erpa.cc/",
+  "stylesheet": "https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css",
   "themeMode": "dark",
-  "location": "Amsterdam, Netherlands",
-  "locationUrl": "https://maps.google.com/?q=52.356394,4.950837",
-  "facility": "Nikhef",
-  "facilityUrl": "https://www.peeringdb.com/fac/18",
-  "ipv4": "127.0.0.1",
-  "ipv6": "::1",
+  "location": "Helsinki, Finland",
+  "locationUrl": "https://maps.google.com/?q=60.341501,25.027735",
+  "facility": "Hetzner Online",
+  "facilityUrl": "https://www.peeringdb.com/fac/3886",
+  "ipv4": "65.21.130.122",
+  "ipv6": "2a01:4f9:3b:3e66::283",
   "locations": {
-    "Amsterdam, Netherlands": "https://lg-nl-ams.example.com/",
-    "Helsinki, Finland": "https://lg-fi-hel.example.com/",
-    "Frankfurt, Germany": "https://lg-de-fra.example.com/"
+    "Helsinki, Finland": "https://looking-glass.erpa.cc/"
   },
-  "iPerf3incoming": "iperf3 -4 -c hostname -p 5201 -P 4",
-  "iPerf3outgoing": "iperf3 -4 -c hostname -p 5201 -P 4 -R",
+  "iPerf3incoming": "iperf3 -4 -c looking-glass.erpa.cc -p 5201 -P 4",
+  "iPerf3outgoing": "iperf3 -4 -c looking-glass.erpa.cc -p 5201 -P 4 -R",
   "speedtestFiles": {
-    "100M": "https://example.com/100M.bin",
-    "1G": "https://example.com/1G.bin",
-    "10G": "https://example.com/10G.bin"
+    "100M": "https://looking-glass.erpa.cc/100M.bin",
+    "1G": "https://looking-glass.erpa.cc/1G.bin",
+    "10G": "https://looking-glass.erpa.cc/10G.bin"
   }
 }
