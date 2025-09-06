@@ -1,9 +1,7 @@
-/*
-  Production-ready WebSocket server with HTTP endpoint for serving
-  minified HTML and client JS. Supports execution of network commands
-  (ping, mtr, traceroute) with per-IP rate limiting and single command
-  enforcement.
-*/
+/**
+ * Production-ready Looking Glass Server
+ * Serves minified HTML & JS and handles WebSocket command execution
+ */
 
 const http = require('http');
 const fs = require('fs');
@@ -13,16 +11,14 @@ const WebSocket = require('ws');
 const { spawn } = require('child_process');
 const net = require('net');
 
-// -------------------- Config & Templates --------------------
-
-// Check that config exists
+// -------------------- Config --------------------
 const CONFIG_PATH = './config.json';
 if (!fs.existsSync(CONFIG_PATH)) {
-  console.error('File not found: config.json');
+  console.error('config.json not found');
   process.exit(1);
 }
 
-// Minifier options for HTML/JS
+const config = require(CONFIG_PATH);
 const MINIFY_OPTIONS = {
   collapseWhitespace: true,
   removeComments: true,
@@ -30,21 +26,19 @@ const MINIFY_OPTIONS = {
   minifyJS: true
 };
 
-// Load configuration and templates
-const configData = require(CONFIG_PATH);
-const templateSource = fs.readFileSync('./index.hbs', 'utf8');
+// -------------------- Templates --------------------
+const htmlTemplateSource = fs.readFileSync('./index.hbs', 'utf8');
 const clientScript = fs.readFileSync('./client.js', 'utf8');
 
 Handlebars.registerHelper('eq', (a, b) => a === b);
-const compiledTemplate = Handlebars.compile(templateSource);
+const compiledTemplate = Handlebars.compile(htmlTemplateSource);
 
-const minifiedHtml = minify(compiledTemplate(configData), MINIFY_OPTIONS);
+const minifiedHtml = minify(compiledTemplate(config), MINIFY_OPTIONS);
 const minifiedJs = minify(clientScript, MINIFY_OPTIONS);
 
 // -------------------- HTTP Server --------------------
-
-const SERVER_PORT = process.env.PORT || 3000;
-const httpServer = http.createServer((req, res) => {
+const PORT = process.env.PORT || 3000;
+const server = http.createServer((req, res) => {
   if (req.url === '/') {
     res.writeHead(200, { 'Content-Type': 'text/html' });
     res.end(minifiedHtml);
@@ -60,19 +54,16 @@ const httpServer = http.createServer((req, res) => {
   }
 });
 
-httpServer.listen(SERVER_PORT, () => {
-  console.log(`Server running on port ${SERVER_PORT}`);
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
 
 // -------------------- WebSocket Server --------------------
-
-// One command per IP at a time
-const webSocketServer = new WebSocket.Server({ server: httpServer });
+const wss = new WebSocket.Server({ server });
 const activeCommands = new Map(); // ws -> child process
-const lastCommandTimestamps = new Map(); // ip -> timestamp
-const COMMAND_RATE_LIMIT_MS = 5000; // 1 command per 5s
+const ipTimestamps = new Map();   // ip -> last command timestamp
+const RATE_LIMIT_MS = 5000;       // 1 command per 5 seconds per IP
 
-// Allowed commands and args
 const ALLOWED_COMMANDS = {
   ping: ['ping', ['-c', '4', '-w', '15']],
   mtr: ['mtr', ['-r', '-n', '-c', '4']],
@@ -86,72 +77,60 @@ function isValidTarget(target) {
   return hostnameRegex.test(target);
 }
 
-// Handle new WebSocket connections
-webSocketServer.on('connection', (clientSocket, req) => {
+wss.on('connection', (ws, req) => {
   const forwarded = req.headers['x-forwarded-for'];
   const clientIp = forwarded ? forwarded.split(',')[0] : req.socket.remoteAddress;
-  console.log(`[${clientIp}] WebSocket connection established`);
+  console.log(`[${clientIp}] WebSocket connected`);
 
-  clientSocket.on('message', (message) => {
-    const rawCommand = message.toString().trim();
-    const [commandName, target] = rawCommand.split(/\s+/, 2);
+  ws.on('message', (message) => {
+    const [commandName, target] = message.toString().trim().split(/\s+/, 2);
 
     // Validate command
     if (!ALLOWED_COMMANDS[commandName]) {
-      clientSocket.send('Invalid command format');
-      clientSocket.send('close');
-      console.log(`[${clientIp}] Invalid command: ${rawCommand}`);
+      ws.send('Invalid command');
+      ws.send('close');
       return;
     }
 
     // Validate target
     if (!target || !isValidTarget(target)) {
-      clientSocket.send('Target must be a valid IP or hostname');
-      clientSocket.send('close');
-      console.log(`[${clientIp}] Invalid target: ${target}`);
+      ws.send('Invalid target');
+      ws.send('close');
       return;
     }
 
     // Rate limiting
-    const lastTimestamp = lastCommandTimestamps.get(clientIp) || 0;
-    if (Date.now() - lastTimestamp < COMMAND_RATE_LIMIT_MS) {
-      clientSocket.send('Rate limit exceeded. Wait before sending another command.');
+    const lastTime = ipTimestamps.get(clientIp) || 0;
+    if (Date.now() - lastTime < RATE_LIMIT_MS) {
+      ws.send('Rate limit exceeded');
       return;
     }
 
-    // Ensure only one command per IP
-    if (activeCommands.has(clientSocket)) {
-      clientSocket.send('Command already running. Wait until it finishes.');
-      console.log(`[${clientIp}] Command already running`);
+    // Single command per connection
+    if (activeCommands.has(ws)) {
+      ws.send('Command already running');
       return;
     }
 
-    const [executable, args] = ALLOWED_COMMANDS[commandName];
-    console.log(`[${clientIp}] Executing: ${executable} ${args.join(' ')} ${target}`);
+    const [exec, args] = ALLOWED_COMMANDS[commandName];
+    console.log(`[${clientIp}] Executing: ${exec} ${args.join(' ')} ${target}`);
 
-    // Spawn child process
-    const childProcess = spawn(executable, [...args, target]);
-    activeCommands.set(clientSocket, childProcess);
-    lastCommandTimestamps.set(clientIp, Date.now());
+    const child = spawn(exec, [...args, target]);
+    activeCommands.set(ws, child);
+    ipTimestamps.set(clientIp, Date.now());
 
-    // Stream stdout to client
-    childProcess.stdout.on('data', (data) => clientSocket.send(data.toString()));
-    childProcess.stderr.on('data', (data) => console.error(`[${clientIp}] ${data}`));
-
-    // Cleanup on process close
-    childProcess.on('close', () => {
-      activeCommands.delete(clientSocket);
-      clientSocket.send('close');
+    child.stdout.on('data', (data) => ws.send(data.toString()));
+    child.stderr.on('data', (data) => console.error(`[${clientIp}] ${data}`));
+    child.on('close', () => {
+      activeCommands.delete(ws);
+      ws.send('close');
     });
   });
 
-  // Cleanup on socket close
-  clientSocket.on('close', () => {
-    console.log(`[${clientIp}] WebSocket connection closed`);
-    const childProcess = activeCommands.get(clientSocket);
-    if (childProcess) {
-      childProcess.kill();
-      activeCommands.delete(clientSocket);
-    }
+  ws.on('close', () => {
+    const child = activeCommands.get(ws);
+    if (child) child.kill();
+    activeCommands.delete(ws);
+    console.log(`[${clientIp}] WebSocket closed`);
   });
 });
