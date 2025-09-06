@@ -7,122 +7,154 @@
   <link href="{{stylesheet}}" rel="stylesheet">
 </head>
 <body class="bg-body-tertiary">
-  <div class="col-lg-8 mx-auto p-3 py-md-5">
+  <div class="container col-lg-8 mx-auto p-3 py-md-5">
+
+    <!-- Header -->
     <header class="d-flex align-items-center justify-content-between mb-5">
-      <div class="col-4">
-        <a class="navbar-brand" href="{{companyUrl}}"><h1 class="h3">{{company}}</h1></a>
-      </div>
-      <div class="col-4 float-end">
-        <select id="locations" class="form-select" onchange="window.location = this.options[this.selectedIndex].value">
-          {{#each locations}}
-            <option value="{{this}}" {{#if (eq @key ../location)}}selected{{/if}}>{{@key}}</option>
-          {{/each}}
-        </select>
-      </div>
+      <a class="navbar-brand" href="{{companyUrl}}">
+        <h1 class="h3">{{company}}</h1>
+      </a>
+      <select id="locations" class="form-select w-auto" onchange="window.location = this.value">
+        {{#each locations}}
+          <option value="{{this}}" {{#if (eq @key ../location)}}selected{{/if}}>{{@key}}</option>
+        {{/each}}
+      </select>
     </header>
+
+    <!-- Main Card -->
     <main class="row mb-5">
       <div class="card shadow-lg">
-        <div class="card-body border-bottom">
-          <h2 class="fs-5 card-title mt-1 mb-3">Looking Glass</h2>
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label for="loc" class="mb-2 text-muted">Location</label>
+
+        <!-- Looking Glass Info -->
+        <section class="card-body border-bottom">
+          <h2 class="fs-5 mb-3">Looking Glass</h2>
+          <div class="row g-3">
+
+            <!-- Location -->
+            <div class="col-md-6">
+              <label for="loc" class="form-label text-muted">Location</label>
               <div class="input-group">
-                <input id="loc" type="text" class="form-control" value="{{location}}" onfocus="this.select()" readonly="">
+                <input id="loc" type="text" class="form-control" value="{{location}}" readonly onfocus="this.select()">
                 <a class="btn btn-outline-primary" href="{{locationUrl}}" target="_blank">Map</a>
               </div>
             </div>
-            <div class="col-md-6 mb-3">
-              <label for="fac" class="mb-2 text-muted">Facility</label>
+
+            <!-- Facility -->
+            <div class="col-md-6">
+              <label for="fac" class="form-label text-muted">Facility</label>
               <div class="input-group">
-                <input id="fac" type="text" class="form-control" value="{{facility}}" onfocus="this.select()" readonly="">
-                <a href="{{facilityUrl}}" class="btn btn-outline-primary" target="_blank">PeeringDB</a>
+                <input id="fac" type="text" class="form-control" value="{{facility}}" readonly onfocus="this.select()">
+                <a class="btn btn-outline-primary" href="{{facilityUrl}}" target="_blank">PeeringDB</a>
               </div>
             </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label for="v4" class="mb-2 text-muted">IPv4 address</label>
+
+            <!-- IPv4 -->
+            <div class="col-md-6">
+              <label for="v4" class="form-label text-muted">IPv4</label>
               <div class="input-group">
-                <input id="v4" type="text" class="form-control" value="{{ipv4}}" onfocus="this.select()" readonly="">
+                <input id="v4" type="text" class="form-control" value="{{ipv4}}" readonly onfocus="this.select()">
                 <button class="btn btn-outline-primary" onclick="copy('{{ipv4}}', this)">Copy</button>
               </div>
             </div>
-            <div class="col-md-6 mb-3">
-              <label for="v6" class="mb-2 text-muted">IPv6 address</label>
+
+            <!-- IPv6 -->
+            <div class="col-md-6">
+              <label for="v6" class="form-label text-muted">IPv6</label>
               <div class="input-group">
-                <input id="v6" type="text" class="form-control" value="{{ipv6}}" onfocus="this.select()" readonly="">
+                <input id="v6" type="text" class="form-control" value="{{ipv6}}" readonly onfocus="this.select()">
                 <button class="btn btn-outline-primary" onclick="copy('{{ipv6}}', this)">Copy</button>
               </div>
             </div>
+
           </div>
-        </div>
-        <div class="card-body border-bottom">
-          <h2 class="fs-5 card-title mt-1 mb-3">Command Query</h2>
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label for="target" class="mb-2 text-muted">Target</label>
-              <div class="input-group">
-                <input id="target" type="text" class="form-control" placeholder="IP address or hostname">
-              </div>
+        </section>
+
+        <!-- Command Query -->
+        <section class="card-body border-bottom">
+          <h2 class="fs-5 mb-3">Command Query</h2>
+          <div class="row g-3">
+
+            <div class="col-md-6">
+              <label for="target" class="form-label text-muted">Target</label>
+              <input id="target" type="text" class="form-control" placeholder="IP or hostname">
             </div>
-            <div class="col-md-6 mb-3">
-              <div class="mb-2 text-muted">Execute</div>
-              <div class="btn-group input-group">
+
+            <div class="col-md-6">
+              <label class="form-label text-muted mb-2">Execute</label>
+              <div class="btn-group w-100">
                 <button id="ping" class="btn btn-outline-primary" onclick="send('ping')">ping</button>
                 <button id="mtr" class="btn btn-outline-primary" onclick="send('mtr')">mtr</button>
                 <button id="traceroute" class="btn btn-outline-primary" onclick="send('traceroute')">traceroute</button>
               </div>
             </div>
-            <div class="col-md-12">
+
+            <div class="col-12">
               <pre id="output" class="p-3 bg-dark text-light rounded d-none"></pre>
             </div>
+
           </div>
-        </div>
-        <div class="card-body">
-          <h2 class="fs-5 card-title mt-1 mb-3">Speed Test</h2>
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label for="inc" class="mb-2 text-muted">iPerf3 Incoming</label>
+        </section>
+
+        <!-- Speed Test -->
+        <section class="card-body">
+          <h2 class="fs-5 mb-3">Speed Test</h2>
+          <div class="row g-3">
+
+            <!-- iPerf3 Incoming -->
+            <div class="col-md-6">
+              <label for="inc" class="form-label text-muted">iPerf3 Incoming</label>
               <div class="input-group">
-                <input id="inc" type="text" class="form-control" value="{{iPerf3incoming}}" onfocus="this.select()" readonly="">
+                <input id="inc" type="text" class="form-control" value="{{iPerf3incoming}}" readonly onfocus="this.select()">
                 <button class="btn btn-outline-primary" onclick="copy('{{iPerf3incoming}}', this)">Copy</button>
               </div>
             </div>
-            <div class="col-md-6 mb-3">
-              <label for="out" class="mb-2 text-muted">iPerf3 Outgoing</label>
+
+            <!-- iPerf3 Outgoing -->
+            <div class="col-md-6">
+              <label for="out" class="form-label text-muted">iPerf3 Outgoing</label>
               <div class="input-group">
-                <input id="out" type="text" class="form-control" value="{{iPerf3outgoing}}" onfocus="this.select()" readonly="">
+                <input id="out" type="text" class="form-control" value="{{iPerf3outgoing}}" readonly onfocus="this.select()">
                 <button class="btn btn-outline-primary" onclick="copy('{{iPerf3outgoing}}', this)">Copy</button>
               </div>
             </div>
-          </div>
-          <div class="row">
-            <div class="mb-2 text-muted">Test Files</div>
-            <div class="btn-group input-group mb-3">
-              {{#each speedtestFiles}}
-                <a href="{{this}}" class="btn btn-outline-primary">{{@key}}</a>
-              {{/each}}
+
+            <!-- Speedtest Files -->
+            <div class="col-12">
+              <label class="form-label text-muted mb-2">Test Files</label>
+              <div class="btn-group w-100">
+                {{#each speedtestFiles}}
+                  <a href="{{this}}" class="btn btn-outline-primary">{{@key}}</a>
+                {{/each}}
+              </div>
             </div>
+
           </div>
-        </div>
+        </section>
+
       </div>
     </main>
-    <footer>
-      <small class="text-muted">Looking Glass licensed <a href="https://github.com/ernestpasnik/looking-glass/blob/main/LICENSE" target="_blank">Apache-2.0</a>.</small>
-      <a href="https://github.com/ernestpasnik/looking-glass" target="_blank" class="float-end">
+
+    <!-- Footer -->
+    <footer class="d-flex justify-content-between align-items-center mt-4">
+      <small class="text-muted">
+        Looking Glass licensed 
+        <a href="https://github.com/ernestpasnik/looking-glass/blob/main/LICENSE" target="_blank">Apache-2.0</a>.
+      </small>
+      <a href="https://github.com/ernestpasnik/looking-glass" target="_blank">
         <img src="https://img.shields.io/github/stars/ernestpasnik/looking-glass" alt="GitHub">
       </a>
     </footer>
+
   </div>
+
   <script src="client.js"></script>
   <script>
-  async function copy(txt, btn) {
-    if (!navigator.clipboard?.writeText) return Promise.reject('Copy n/a');
-    btn.innerHTML = 'Copied';
-    await navigator.clipboard.writeText(txt);
-    setTimeout(() => btn.innerHTML = 'Copy', 1000);
-  }
+    async function copy(text, btn) {
+      if (!navigator.clipboard?.writeText) return;
+      btn.textContent = 'Copied';
+      await navigator.clipboard.writeText(text);
+      setTimeout(() => btn.textContent = 'Copy', 1000);
+    }
   </script>
 </body>
 </html>
