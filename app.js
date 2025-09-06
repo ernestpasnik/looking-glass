@@ -1,8 +1,3 @@
-/**
- * Production-ready Looking Glass Server
- * Serves minified HTML & JS and handles WebSocket command execution
- */
-
 const http = require('http');
 const fs = require('fs');
 const Handlebars = require('handlebars');
@@ -12,13 +7,7 @@ const { spawn } = require('child_process');
 const net = require('net');
 
 // -------------------- Config --------------------
-const CONFIG_PATH = './config.json';
-if (!fs.existsSync(CONFIG_PATH)) {
-  console.error('config.json not found');
-  process.exit(1);
-}
-
-const config = require(CONFIG_PATH);
+const config = require('./config.js');
 const MINIFY_OPTIONS = {
   collapseWhitespace: true,
   removeComments: true,
@@ -60,9 +49,9 @@ server.listen(PORT, () => {
 
 // -------------------- WebSocket Server --------------------
 const wss = new WebSocket.Server({ server });
-const activeCommands = new Map(); // ws -> child process
-const ipTimestamps = new Map();   // ip -> last command timestamp
-const RATE_LIMIT_MS = 5000;       // 1 command per 5 seconds per IP
+const activeCommands = new Map();
+const ipTimestamps = new Map();
+const RATE_LIMIT_MS = 5000;
 
 const ALLOWED_COMMANDS = {
   ping: ['ping', ['-c', '4', '-w', '15']],
@@ -70,7 +59,6 @@ const ALLOWED_COMMANDS = {
   traceroute: ['traceroute', ['-w', '2']]
 };
 
-// Validate IP or hostname
 function isValidTarget(target) {
   if (net.isIPv4(target) || net.isIPv6(target)) return true;
   const hostnameRegex = /^(?!-)[A-Za-z0-9-]{1,63}(?<!-)(\.[A-Za-z]{2,})+$/;
@@ -85,28 +73,24 @@ wss.on('connection', (ws, req) => {
   ws.on('message', (message) => {
     const [commandName, target] = message.toString().trim().split(/\s+/, 2);
 
-    // Validate command
     if (!ALLOWED_COMMANDS[commandName]) {
       ws.send('Invalid command');
       ws.send('close');
       return;
     }
 
-    // Validate target
     if (!target || !isValidTarget(target)) {
       ws.send('Invalid target');
       ws.send('close');
       return;
     }
 
-    // Rate limiting
     const lastTime = ipTimestamps.get(clientIp) || 0;
     if (Date.now() - lastTime < RATE_LIMIT_MS) {
       ws.send('Rate limit exceeded');
       return;
     }
 
-    // Single command per connection
     if (activeCommands.has(ws)) {
       ws.send('Command already running');
       return;
