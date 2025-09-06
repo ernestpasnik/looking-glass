@@ -1,89 +1,84 @@
 /*
-  WebSocket Client Script for Command Execution and Status Updates
+  WebSocket Client for Network Commands
 
-  This script connects to the server using WebSockets to send and receive 
-  data related to command execution (ping, mtr, traceroute). The WebSocket 
-  connection dynamically sends the command along with the target input 
-  provided by the user.
-
-  Key Features:
-  - Initializes WebSocket connection to the server on page load.
-  - Manages buttons' state to prevent sending multiple commands at once.
-  - Listens for incoming data from the server, displays it in real-time, and
-    handles connection closure.
-  - Handles errors and WebSocket reconnections.
-
-  Functions:
-  - toggleButtons: Enables/disables command buttons based on whether a 
-    command is running.
-  - connectWebSocket: Establishes a WebSocket connection and defines event 
-    handlers for open, message, close, and error events.
-  - send: Sends the selected command (ping, mtr, or traceroute) to the server 
-    and updates the UI accordingly.
+  Responsibilities:
+  - Connect to WebSocket server on page load
+  - Send commands (ping, mtr, traceroute)
+  - Display output in real-time
+  - Prevent multiple commands at once
+  - Handle connection errors and auto-reconnect
 */
 
-let ws;
-let commandRunning = false;
-const output = document.getElementById('output');
-const target = document.getElementById('target');
-const ping = document.getElementById('ping');
-const mtr = document.getElementById('mtr');
-const traceroute = document.getElementById('traceroute');
+let webSocket;
+let isCommandRunning = false;
 
-function toggleButtons(disabled) {
-  ping.disabled = disabled;
-  mtr.disabled = disabled;
-  traceroute.disabled = disabled;
+const outputContainer = document.getElementById('output');
+const targetInput = document.getElementById('target');
+const pingButton = document.getElementById('ping');
+const mtrButton = document.getElementById('mtr');
+const tracerouteButton = document.getElementById('traceroute');
+
+function setCommandButtonsState(disabled) {
+  pingButton.disabled = disabled;
+  mtrButton.disabled = disabled;
+  tracerouteButton.disabled = disabled;
 }
 
 function connectWebSocket() {
-  const prot = window.location.protocol === 'https:' ? 'wss' : 'ws';
-  ws = new WebSocket(`${prot}://${window.location.hostname}`);
+  const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+  webSocket = new WebSocket(`${protocol}://${window.location.hostname}`);
 
-  ws.onopen = () => {
-    console.log('WebSocket connection opened');
-  };
+  webSocket.onopen = () => console.log('WebSocket connected');
 
-  ws.onmessage = (event) => {
-    if (event.data == 'close') {
-      commandRunning = false;
-      toggleButtons(false);
+  webSocket.onmessage = (event) => {
+    if (event.data === 'close') {
+      isCommandRunning = false;
+      setCommandButtonsState(false);
       return;
     }
-    output.classList.remove('d-none');
-    output.textContent += event.data;
+    outputContainer.classList.remove('d-none');
+    outputContainer.textContent += event.data;
   };
 
-  ws.onclose = () => {
-    console.log('WebSocket connection closed');
-    commandRunning = false;
+  webSocket.onclose = () => {
+    console.log('WebSocket closed, reconnecting in 2s...');
+    isCommandRunning = false;
+    setCommandButtonsState(false);
+    setTimeout(connectWebSocket, 2000);
   };
 
-  ws.onerror = (error) => {
+  webSocket.onerror = (error) => {
     console.error('WebSocket error:', error);
-    commandRunning = false;
+    isCommandRunning = false;
+    setCommandButtonsState(false);
   };
 }
 
-function send(commandType) {
-  if (commandRunning) {
+function sendCommand(commandName) {
+  if (isCommandRunning) return;
+
+  const targetValue = targetInput.value.trim();
+  if (!targetValue) {
+    targetInput.focus();
     return;
   }
 
-  if (!target.value) {
-    target.focus();
-    return;
-  }
+  setCommandButtonsState(true);
+  isCommandRunning = true;
+  outputContainer.textContent = '';
 
-  toggleButtons(true);
-  commandRunning = true;
-  output.textContent = '';
-
-  if (ws && ws.readyState === WebSocket.OPEN) {
-    ws.send(`${commandType} ${target.value}`);
+  if (webSocket && webSocket.readyState === WebSocket.OPEN) {
+    webSocket.send(`${commandName} ${targetValue}`);
   } else {
-    output.textContent = 'WebSocket connection is not open';
+    outputContainer.textContent = 'WebSocket connection is not open';
+    setCommandButtonsState(false);
+    isCommandRunning = false;
   }
 }
+
+// Attach buttons
+pingButton.onclick = () => sendCommand('ping');
+mtrButton.onclick = () => sendCommand('mtr');
+tracerouteButton.onclick = () => sendCommand('traceroute');
 
 window.onload = connectWebSocket;
