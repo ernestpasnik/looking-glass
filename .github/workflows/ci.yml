@@ -25,28 +25,8 @@ jobs:
       - name: Start app in background
         run: |
           node app.js &
-          sleep 5  # give server time to start
+          sleep 5
 
-      - name: Check app is running
-        run: curl -f http://localhost:3000/ || exit 1
-
-      - name: Take screenshot
-        uses: actions/setup-node@v4
+      - name: Check server is running
         run: |
-          npm install puppeteer
-          node -e "
-            const puppeteer = require('puppeteer');
-            (async () => {
-              const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
-              const page = await browser.newPage();
-              await page.goto('http://localhost:3000', { waitUntil: 'networkidle2' });
-              await page.screenshot({ path: 'screenshot.png', fullPage: true });
-              await browser.close();
-            })();
-          "
-
-      - name: Upload screenshot artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: screenshot
-          path: screenshot.png
+          curl -f http://localhost:3000/ || exit 1
