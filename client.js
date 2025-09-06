@@ -1,84 +1,99 @@
-/*
-  WebSocket Client for Network Commands
+/**
+ * Looking Glass WebSocket Client
+ * Handles command execution, output display, and UI interactions.
+ */
 
-  Responsibilities:
-  - Connect to WebSocket server on page load
-  - Send commands (ping, mtr, traceroute)
-  - Display output in real-time
-  - Prevent multiple commands at once
-  - Handle connection errors and auto-reconnect
-*/
+class LookingGlassClient {
+  constructor() {
+    this.ws = null;
+    this.commandRunning = false;
 
-let webSocket;
-let isCommandRunning = false;
+    // Elements
+    this.outputEl = document.getElementById('output');
+    this.targetEl = document.getElementById('target');
+    this.buttons = {
+      ping: document.getElementById('ping'),
+      mtr: document.getElementById('mtr'),
+      traceroute: document.getElementById('traceroute')
+    };
 
-const outputContainer = document.getElementById('output');
-const targetInput = document.getElementById('target');
-const pingButton = document.getElementById('ping');
-const mtrButton = document.getElementById('mtr');
-const tracerouteButton = document.getElementById('traceroute');
+    // Bind button events
+    this._bindUIEvents();
+    // Connect WebSocket
+    this._connectWebSocket();
+  }
 
-function setCommandButtonsState(disabled) {
-  pingButton.disabled = disabled;
-  mtrButton.disabled = disabled;
-  tracerouteButton.disabled = disabled;
-}
+  /** Enable or disable command buttons */
+  _toggleButtons(disabled) {
+    Object.values(this.buttons).forEach(btn => btn.disabled = disabled);
+  }
 
-function connectWebSocket() {
-  const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-  webSocket = new WebSocket(`${protocol}://${window.location.hostname}`);
+  /** Bind UI button events */
+  _bindUIEvents() {
+    Object.entries(this.buttons).forEach(([command, btn]) => {
+      btn.addEventListener('click', () => this.sendCommand(command));
+    });
+  }
 
-  webSocket.onopen = () => console.log('WebSocket connected');
+  /** Establish WebSocket connection */
+  _connectWebSocket() {
+    const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+    this.ws = new WebSocket(`${protocol}://${window.location.hostname}`);
 
-  webSocket.onmessage = (event) => {
-    if (event.data === 'close') {
-      isCommandRunning = false;
-      setCommandButtonsState(false);
+    this.ws.addEventListener('open', () => console.log('WebSocket connected'));
+    this.ws.addEventListener('close', () => {
+      console.log('WebSocket closed');
+      this.commandRunning = false;
+      this._toggleButtons(false);
+    });
+    this.ws.addEventListener('error', (err) => {
+      console.error('WebSocket error:', err);
+      this.commandRunning = false;
+      this._toggleButtons(false);
+    });
+    this.ws.addEventListener('message', (event) => this._handleMessage(event.data));
+  }
+
+  /** Handle messages from server */
+  _handleMessage(message) {
+    if (message === 'close') {
+      this.commandRunning = false;
+      this._toggleButtons(false);
       return;
     }
-    outputContainer.classList.remove('d-none');
-    outputContainer.textContent += event.data;
-  };
-
-  webSocket.onclose = () => {
-    console.log('WebSocket closed, reconnecting in 2s...');
-    isCommandRunning = false;
-    setCommandButtonsState(false);
-    setTimeout(connectWebSocket, 2000);
-  };
-
-  webSocket.onerror = (error) => {
-    console.error('WebSocket error:', error);
-    isCommandRunning = false;
-    setCommandButtonsState(false);
-  };
-}
-
-function sendCommand(commandName) {
-  if (isCommandRunning) return;
-
-  const targetValue = targetInput.value.trim();
-  if (!targetValue) {
-    targetInput.focus();
-    return;
+    this.outputEl.classList.remove('d-none');
+    this.outputEl.textContent += message;
   }
 
-  setCommandButtonsState(true);
-  isCommandRunning = true;
-  outputContainer.textContent = '';
+  /** Send command to server */
+  sendCommand(command) {
+    if (this.commandRunning) return;
 
-  if (webSocket && webSocket.readyState === WebSocket.OPEN) {
-    webSocket.send(`${commandName} ${targetValue}`);
-  } else {
-    outputContainer.textContent = 'WebSocket connection is not open';
-    setCommandButtonsState(false);
-    isCommandRunning = false;
+    const target = this.targetEl.value.trim();
+    if (!target) {
+      this.targetEl.focus();
+      return;
+    }
+
+    if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
+      this.outputEl.textContent = 'WebSocket connection is not open';
+      return;
+    }
+
+    this.commandRunning = true;
+    this._toggleButtons(true);
+    this.outputEl.textContent = '';
+    this.ws.send(`${command} ${target}`);
   }
 }
 
-// Attach buttons
-pingButton.onclick = () => sendCommand('ping');
-mtrButton.onclick = () => sendCommand('mtr');
-tracerouteButton.onclick = () => sendCommand('traceroute');
+// Initialize client on page load
+window.addEventListener('DOMContentLoaded', () => new LookingGlassClient());
 
-window.onload = connectWebSocket;
+/** Clipboard helper for copy buttons */
+async function copyToClipboard(text, button) {
+  if (!navigator.clipboard?.writeText) return;
+  button.textContent = 'Copied';
+  await navigator.clipboard.writeText(text);
+  setTimeout(() => button.textContent = 'Copy', 1000);
+}
