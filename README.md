@@ -1,6 +1,7 @@
 # Node.js Looking Glass
 
 Lightweight and simple **Looking Glass** powered by **Node.js** and **Bootstrap 5.3**.  
+Supports **Bootswatch themes** for easy light/dark or custom styling.  
 Inspired by [hybula/lookingglass](https://github.com/hybula/lookingglass).
 
 ![Screenshot](https://i.imgur.com/LPByj0x.png)
@@ -22,16 +23,15 @@ Inspired by [hybula/lookingglass](https://github.com/hybula/lookingglass).
 git clone https://github.com/ernestpasnik/looking-glass.git
 cd looking-glass
 
-# Configure
+# Configure Config
 mv config.dist.js config.js
-# Edit config.js if needed
-# nano config.js
+nano config.js
 
 # Install Dependencies
 npm install
 
 # Run Server
-node server.js
+node app.js
 ```
 
 ---
