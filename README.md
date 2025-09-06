@@ -17,30 +17,26 @@ Inspired by [hybula/lookingglass](https://github.com/hybula/lookingglass).
 
 ## Installation
 
-### Part 1: Clone Repository
-
 ```bash
+# Clone Repository
 git clone https://github.com/ernestpasnik/looking-glass.git
 cd looking-glass
 
-Part 2: Configure
-
+# Configure
 mv config.dist.js config.js
 # Edit config.js if needed
 # nano config.js
 
-Part 3: Install Dependencies
-
+# Install Dependencies
 npm install
 
-Part 4: Run Server
-
+# Run Server
 node server.js
 ```
 
 ---
 
-How to Use
+# How to Use
 
 1. Open your browser and navigate to your server (e.g., http://yourdomain.com).
 2. Select a location from the dropdown to switch between sites.
@@ -50,7 +46,7 @@ How to Use
 
 ---
 
-Features
+# Features
 
 - Real-time execution of network commands via WebSocket
 - Minified HTML and JS for fast loading
@@ -60,6 +56,6 @@ Features
 
 ---
 
-License
+# License
 
 This project is licensed under the Apache-2.0 License.
