@@ -4,15 +4,20 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Looking Glass — {{company}}</title>
-  <link href="{{stylesheet}}" rel="stylesheet">
+
+  <!-- Bootswatch CDN -->
+  <link 
+    href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/{{bootswatchTheme}}/bootstrap.min.css" 
+    rel="stylesheet">
 </head>
 <body class="bg-body-tertiary">
+
   <div class="container col-lg-8 mx-auto p-3 py-md-5">
 
     <!-- Header -->
-    <header class="d-flex align-items-center justify-content-between mb-5">
+    <header class="d-flex justify-content-between align-items-center mb-5">
       <a class="navbar-brand" href="{{companyUrl}}">
-        <h1 class="h3">{{company}}</h1>
+        <h1 class="h3 m-0">{{company}}</h1>
       </a>
       <select id="locations" class="form-select w-auto" onchange="window.location = this.value">
         {{#each locations}}
@@ -22,7 +27,7 @@
     </header>
 
     <!-- Main Card -->
-    <main class="row mb-5">
+    <main class="mb-5">
       <div class="card shadow-lg">
 
         <!-- Looking Glass Info -->
@@ -34,7 +39,7 @@
             <div class="col-md-6">
               <label for="loc" class="form-label text-muted">Location</label>
               <div class="input-group">
-                <input id="loc" type="text" class="form-control" value="{{location}}" readonly onfocus="this.select()">
+                <input id="loc" class="form-control" value="{{location}}" readonly onfocus="this.select()">
                 <a class="btn btn-outline-primary" href="{{locationUrl}}" target="_blank">Map</a>
               </div>
             </div>
@@ -43,7 +48,7 @@
             <div class="col-md-6">
               <label for="fac" class="form-label text-muted">Facility</label>
               <div class="input-group">
-                <input id="fac" type="text" class="form-control" value="{{facility}}" readonly onfocus="this.select()">
+                <input id="fac" class="form-control" value="{{facility}}" readonly onfocus="this.select()">
                 <a class="btn btn-outline-primary" href="{{facilityUrl}}" target="_blank">PeeringDB</a>
               </div>
             </div>
@@ -52,7 +57,7 @@
             <div class="col-md-6">
               <label for="v4" class="form-label text-muted">IPv4</label>
               <div class="input-group">
-                <input id="v4" type="text" class="form-control" value="{{ipv4}}" readonly onfocus="this.select()">
+                <input id="v4" class="form-control" value="{{ipv4}}" readonly onfocus="this.select()">
                 <button class="btn btn-outline-primary" onclick="copy('{{ipv4}}', this)">Copy</button>
               </div>
             </div>
@@ -61,7 +66,7 @@
             <div class="col-md-6">
               <label for="v6" class="form-label text-muted">IPv6</label>
               <div class="input-group">
-                <input id="v6" type="text" class="form-control" value="{{ipv6}}" readonly onfocus="this.select()">
+                <input id="v6" class="form-control" value="{{ipv6}}" readonly onfocus="this.select()">
                 <button class="btn btn-outline-primary" onclick="copy('{{ipv6}}', this)">Copy</button>
               </div>
             </div>
@@ -100,25 +105,22 @@
           <h2 class="fs-5 mb-3">Speed Test</h2>
           <div class="row g-3">
 
-            <!-- iPerf3 Incoming -->
             <div class="col-md-6">
               <label for="inc" class="form-label text-muted">iPerf3 Incoming</label>
               <div class="input-group">
-                <input id="inc" type="text" class="form-control" value="{{iPerf3incoming}}" readonly onfocus="this.select()">
+                <input id="inc" class="form-control" value="{{iPerf3incoming}}" readonly onfocus="this.select()">
                 <button class="btn btn-outline-primary" onclick="copy('{{iPerf3incoming}}', this)">Copy</button>
               </div>
             </div>
 
-            <!-- iPerf3 Outgoing -->
             <div class="col-md-6">
               <label for="out" class="form-label text-muted">iPerf3 Outgoing</label>
               <div class="input-group">
-                <input id="out" type="text" class="form-control" value="{{iPerf3outgoing}}" readonly onfocus="this.select()">
+                <input id="out" class="form-control" value="{{iPerf3outgoing}}" readonly onfocus="this.select()">
                 <button class="btn btn-outline-primary" onclick="copy('{{iPerf3outgoing}}', this)">Copy</button>
               </div>
             </div>
 
-            <!-- Speedtest Files -->
             <div class="col-12">
               <label class="form-label text-muted mb-2">Test Files</label>
               <div class="btn-group w-100">
