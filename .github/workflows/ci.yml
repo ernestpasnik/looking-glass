@@ -22,8 +22,8 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Start server (smoke test)
+      - name: Start app
         run: |
-          node server.js &
+          node app.js &
           sleep 3
           curl -f http://localhost:3000/ || exit 1
